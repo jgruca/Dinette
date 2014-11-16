@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.contrib.syndication.views import Feed
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -51,7 +52,7 @@ def index_page(request):
     totaltopics = Ftopics.objects.count()
     totalposts = totaltopics + Reply.objects.count()
     totalusers = User.objects.count()
-    now = datetime.now()
+    now = timezone.now()
     users_online = DinetteUserProfile.objects.filter(
         last_activity__gte=now - timedelta(seconds=900)).count()
     last_registered_user = User.objects.order_by('-date_joined')[0]
@@ -121,7 +122,7 @@ def postTopic(request):
         return HttpResponse(json, content_type=json_mimetype)
 
     #code which checks for flood control
-    if (datetime.now()-request.user.get_profile().last_posttime).seconds < settings.FLOOD_TIME:
+    if (timezone.now()-request.user.get_profile().last_posttime).seconds < settings.FLOOD_TIME:
     #oh....... user trying to flood us Stop him
         d2 = {"is_valid": "flood", "errormessage": "Flood control.................."}
         if request.FILES:
@@ -182,7 +183,7 @@ def postReply(request):
 
 
     #code which checks for flood control
-    if (datetime.now() -(request.user.get_profile().last_posttime)).seconds <= settings.FLOOD_TIME:
+    if (timezone.now() -(request.user.get_profile().last_posttime)).seconds <= settings.FLOOD_TIME:
     #oh....... user trying to flood us Stop him
         d2 = {"is_valid":"flood","errormessage":"You have posted message too recently. Please wait a while before trying again."}
         if request.FILES :
@@ -325,7 +326,7 @@ def assignUserElements(user):
             userprofile = user.get_profile()
             userprofile.userrank = rank
             #this is the time when user posted his last post
-            userprofile.last_posttime = datetime.now()
+            userprofile.last_posttime = timezone.now()
             userprofile.save()
 
 
@@ -385,7 +386,7 @@ def new_topics(request):
 
 def active(request):
     #Time filter = 48 hours
-    days_ago_2 = datetime.now() - timedelta(days = 2)
+    days_ago_2 = timezone.now() - timedelta(days = 2)
     topics = Ftopics.objects.filter(last_reply_on__gt =  days_ago_2)
     active_topics = topics.extra(select= {"activity":"viewcount+100*num_replies"}).order_by("-activity")
     return topic_list(request, active_topics, page_message = "Most active Topics")
