@@ -118,7 +118,7 @@ def postTopic(request):
             json = "<textarea>"+simplejson.dumps(d)+"</textarea>"
         else:
             json = simplejson.dumps(d)
-        return HttpResponse(json, mimetype=json_mimetype)
+        return HttpResponse(json, content_type=json_mimetype)
 
     #code which checks for flood control
     if (datetime.now()-request.user.get_profile().last_posttime).seconds < settings.FLOOD_TIME:
@@ -128,7 +128,7 @@ def postTopic(request):
             json = "<textarea>"+simplejson.dumps(d2)+"</textarea>"
         else :
             json = simplejson.dumps(d2)
-        return HttpResponse(json, mimetype = json_mimetype)
+        return HttpResponse(json, content_type=json_mimetype)
 
     ftopic = topic.save(commit=False)
     #only if there is any file
@@ -163,7 +163,7 @@ def postTopic(request):
         json = "<textarea>"+simplejson.dumps(d2)+"</textarea>"
     else :
         json = simplejson.dumps(d2)
-    return HttpResponse(json, mimetype = json_mimetype)
+    return HttpResponse(json, content_type=json_mimetype)
 
 @login_required
 def postReply(request):
@@ -177,7 +177,7 @@ def postReply(request):
             json = "<textarea>"+simplejson.dumps(d)+"</textarea>"
         else:
             json = simplejson.dumps(d)
-        return HttpResponse(json, mimetype = json_mimetype)
+        return HttpResponse(json, content_type=json_mimetype)
 
 
 
@@ -189,7 +189,7 @@ def postReply(request):
             json = "<textarea>"+simplejson.dumps(d2)+"</textarea>"
         else :
             json = simplejson.dumps(d2)
-        return HttpResponse(json, mimetype = json_mimetype)
+        return HttpResponse(json, content_type=json_mimetype)
 
 
     reply = freply.save(commit=False)
@@ -222,7 +222,7 @@ def postReply(request):
     else:
         json = simplejson.dumps(d2)
 
-    return HttpResponse(json, mimetype = json_mimetype)
+    return HttpResponse(json, content_type=json_mimetype)
 
 @login_required
 def deleteReply(request, reply_id):
@@ -236,7 +236,7 @@ def deleteReply(request, reply_id):
         resp["status"] = 0
         resp["message"] = "Error deleting message"
     json = simplejson.dumps(resp)
-    return HttpResponse(json, mimetype = json_mimetype)
+    return HttpResponse(json, content_type=json_mimetype)
 
 @login_required
 def editReply(request, reply_id):
@@ -363,7 +363,7 @@ def moderate_topic(request, topic_id, action):
         topic.save()
         payload = {'topic_id':topic.pk, 'message':message}
         resp = simplejson.dumps(payload)
-        return HttpResponse(resp, mimetype = json_mimetype)
+        return HttpResponse(resp, content_type=json_mimetype)
     else:
         return HttpResponse('This view must be called via post')
 
