@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.contrib.syndication.views import Feed
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.conf import settings
 from django.contrib.auth.views import (
     login as auth_login, logout as auth_logout)
@@ -23,6 +24,8 @@ except ImportError:
 from dinette.models import Ftopics, Category, Reply, DinetteUserProfile
 from dinette.forms import FtopicForm, ReplyForm
 
+
+User = get_user_model()
 
 #Create module logger
 #several logging configurations are configured in the models

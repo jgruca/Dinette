@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
@@ -23,7 +23,7 @@ class SuperCategory(models.Model):
     ordering = models.PositiveIntegerField(default = 1)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    posted_by = models.ForeignKey(User)
+    posted_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     accessgroups = models.ManyToManyField(Group, related_name='can_access_forums')
     
     class Meta:
@@ -43,8 +43,8 @@ class Category(models.Model):
     super_category = models.ForeignKey(SuperCategory)    
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    posted_by = models.ForeignKey(User, related_name='cposted')
-    moderated_by = models.ManyToManyField(User, related_name='moderaters')
+    posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='cposted')
+    moderated_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='moderaters')
     
     class Meta:
         verbose_name = "Category"
@@ -113,7 +113,7 @@ class TopicManager(models.Manager):
 
 class Ftopics(models.Model):
     category = models.ForeignKey(Category)
-    posted_by = models.ForeignKey(User)
+    posted_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     subject = models.CharField(max_length=999)
     slug = models.SlugField(max_length = 200, db_index = True) 
     message = MarkupField(default_markup_type=getattr(settings,
@@ -143,7 +143,7 @@ class Ftopics(models.Model):
     objects = TopicManager()
 
     # for topic subscriptions
-    subscribers = models.ManyToManyField(User, related_name='subscribers')
+    subscribers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='subscribers')
     
     class Meta:
         ordering = ('-is_sticky', '-last_reply_on',)
@@ -205,7 +205,7 @@ class ReplyManager(models.Manager):
 # Create Replies for a topic
 class Reply(models.Model):
     topic = models.ForeignKey(Ftopics)
-    posted_by = models.ForeignKey(User)
+    posted_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     message = MarkupField(default_markup_type=getattr(settings,
                                                       'DEFAULT_MARKUP_TYPE',
@@ -273,7 +273,7 @@ class Reply(models.Model):
         
         
 class DinetteUserProfile(models.Model):
-    user = models.ForeignKey(User, unique = True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, unique = True)
     last_activity = models.DateTimeField(auto_now_add=True)
     #When was the last session. Used in page activity since last session.
     last_session_activity = models.DateTimeField(auto_now_add=True)
@@ -370,6 +370,6 @@ def notify_subscribers_on_reply(sender, instance, created, **kwargs):
         for subscriber in instance.topic.subscribers.exclude(username=instance.posted_by.username):
             subscriber.email_user(subject, body, from_email)
 
-post_save.connect(create_user_profile, sender=User)
+post_save.connect(create_user_profile, sender=settings.AUTH_USER_MODEL)
 post_save.connect(update_topic_on_reply, sender=Reply)
 post_save.connect(notify_subscribers_on_reply, sender=Reply)

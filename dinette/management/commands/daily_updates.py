@@ -1,13 +1,16 @@
 from django.core.management.base import NoArgsCommand
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
-from django.contrib.auth.models import User
+from django.contrib.auth.models import get_user_model
 
 from mailer import send_html_mail
 
 import datetime
 
 from dinette.models import Ftopics, Reply, DinetteUserProfile
+
+
+User = get_user_model()
 
 class Command(NoArgsCommand):
     help = """

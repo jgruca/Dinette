@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.test import Client
-from django.contrib.auth.models import Group, User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 
 import urlparse
@@ -8,6 +9,8 @@ import urlparse
 from .. import models
 from dinette.models import SuperCategory
 
+
+User = get_user_model()
 
 class Testmaker(TestCase):
     fixtures = ['test_data']
