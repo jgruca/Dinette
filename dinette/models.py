@@ -285,12 +285,20 @@ class DinetteUserProfile(models.Model):
     is_subscribed_to_digest = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return self.user.username
+        if hasattr(settings, 'DINETTE_USERNAME_FIELD'):
+            username = getattr(self.user, settings.DINETTE_USERNAME_FIELD)
+        else:
+            username = getattr(self.user, self.user.USERNAME_FIELD)
+        return username
     
     #Populate the user fields for easy access
     @property
     def username(self):
-        return self.user.username
+        if hasattr(settings, 'DINETTE_USERNAME_FIELD'):
+            username = getattr(self.user, settings.DINETTE_USERNAME_FIELD)
+        else:
+            username = getattr(self.user, self.user.USERNAME_FIELD)
+        return username
     
     @property
     def first_name(self):
@@ -371,7 +379,7 @@ def notify_subscribers_on_reply(sender, instance, created, **kwargs):
         body = instance.message.rendered
         from_email = getattr(settings, 'DINETTE_FROM_EMAIL', '%s notifications <admin@%s>' %(site.name, site.domain))
         # exclude the user who posted this, even if he is subscribed
-        for subscriber in instance.topic.subscribers.exclude(username=instance.posted_by.username):
+        for subscriber in instance.topic.subscribers.exclude(pk=instance.posted_by.pk):
             subscriber.email_user(subject, body, from_email)
 
 post_save.connect(create_user_profile, sender=settings.AUTH_USER_MODEL)
