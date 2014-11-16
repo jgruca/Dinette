@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.template.defaultfilters import truncatewords
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 import hashlib
 from BeautifulSoup import BeautifulSoup
@@ -107,7 +108,7 @@ class TopicManager(models.Manager):
     
     def get_new_since(self, when):
         "Topics with new replies after @when"
-        now = datetime.datetime.now()
+        now = timezone.now()
         return self.filter(last_reply_on__gt = now)
     
 
@@ -315,7 +316,7 @@ class DinetteUserProfile(models.Model):
     def is_online(self):
         from django.conf import settings
         last_online_duration = getattr(settings, 'LAST_ONLINE_DURATION', 900)
-        now = datetime.datetime.now()
+        now = timezone.now()
         if (now - self.last_activity).seconds < last_online_duration:
             return True
         return False   
