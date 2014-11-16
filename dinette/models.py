@@ -327,7 +327,11 @@ class DinetteUserProfile(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            slug = slugify(self.user.username)
+            if hasattr(settings, 'DINETTE_USERNAME_FIELD'):
+                username = getattr(self.user, settings.DINETTE_USERNAME_FIELD)
+            else:
+                username = getattr(self.user, self.user.USERNAME_FIELD)
+            slug = slugify(username)
             if slug:
                 same_slug_count = self._default_manager.filter(slug__startswith=slug).count()
                 if same_slug_count:
