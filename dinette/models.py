@@ -21,7 +21,7 @@ class SiteConfig(models.Model):
 class SuperCategory(models.Model):
     name = models.CharField(max_length = 100)
     description = models.TextField(default='')
-    ordering = models.PositiveIntegerField(default = 1)
+    ordering = models.PositiveIntegerField(default=1)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     posted_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -30,7 +30,7 @@ class SuperCategory(models.Model):
     class Meta:
         verbose_name = "Super Category"
         verbose_name_plural = "Super Categories"
-        ordering = ('-ordering', 'created_on')
+        ordering = ('ordering', 'created_on')
         
     def __unicode__(self):
         return self.name
@@ -40,8 +40,8 @@ class Category(models.Model):
     name = models.CharField(max_length = 100)
     slug = models.SlugField(max_length = 110)
     description = models.TextField(default='')
-    ordering = models.PositiveIntegerField(default = 1)
-    super_category = models.ForeignKey(SuperCategory)    
+    ordering = models.PositiveIntegerField(default=1)
+    super_category = models.ForeignKey(SuperCategory)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='cposted')
