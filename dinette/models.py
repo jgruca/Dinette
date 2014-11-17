@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 from django.template.defaultfilters import truncatewords
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.core.mail import send_mail
 
 import hashlib
 from BeautifulSoup import BeautifulSoup
@@ -381,7 +382,7 @@ def notify_subscribers_on_reply(sender, instance, created, **kwargs):
         from_email = getattr(settings, 'DINETTE_FROM_EMAIL', '%s notifications <admin@%s>' %(site.name, site.domain))
         # exclude the user who posted this, even if he is subscribed
         for subscriber in instance.topic.subscribers.exclude(pk=instance.posted_by.pk):
-            subscriber.email_user(subject, body, from_email)
+            send_mail(subject, body, from_email, [subscriber.email])
 
 post_save.connect(create_user_profile, sender=settings.AUTH_USER_MODEL)
 post_save.connect(update_topic_on_reply, sender=Reply)
