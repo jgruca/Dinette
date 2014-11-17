@@ -48,7 +48,7 @@ def index_page(request):
     for group in groups:
         forums.extend([each for each in group.can_access_forums.all()])
     forums = set(forums)
-    forums = sorted(forums, cmp=lambda x, y: int(y.ordering) - int(x.ordering))
+    forums = sorted(forums, cmp=lambda x, y: int(x.ordering) - int(y.ordering))
     totaltopics = Ftopics.objects.count()
     totalposts = totaltopics + Reply.objects.count()
     totalusers = User.objects.count()
