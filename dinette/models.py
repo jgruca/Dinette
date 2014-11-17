@@ -103,8 +103,8 @@ class Category(models.Model):
 class TopicManager(models.Manager):
     use_for_related_fields = True
 
-    def get_query_set(self):
-        return super(TopicManager, self).get_query_set().filter(is_hidden = False)
+    def get_queryset(self):
+        return super(TopicManager, self).get_queryset().filter(is_hidden = False)
     
     def get_new_since(self, when):
         "Topics with new replies after @when"
@@ -200,8 +200,8 @@ class Ftopics(models.Model):
 class ReplyManager(models.Manager):
     use_for_related_fields = True
 
-    def get_query_set(self):
-        return super(ReplyManager, self).get_query_set().filter(topic__is_hidden=False)
+    def get_queryset(self):
+        return super(ReplyManager, self).get_queryset().filter(topic__is_hidden=False)
 
 # Create Replies for a topic
 class Reply(models.Model):
