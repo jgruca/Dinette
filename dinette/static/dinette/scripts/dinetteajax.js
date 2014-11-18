@@ -69,7 +69,7 @@ function formsubmission(data) {
             $("#formbox").css("display","none");
         }
         else if(data["is_valid"] == "false") {
-            $("tr:lt(3)","#formbox").remove();
+            $("tr:not(.actions)","#formbox").remove();
             $("#formbox  table tbody").prepend(data["response_html"]);
             show_hide_error_box();
             $("#errorbox span").html("There is an error in the form.Please repost the form");
@@ -92,7 +92,7 @@ function formsubmission(data) {
             $("#formbox").css("display","none");
         }
         else if(data["is_valid"] == "false") {
-            $("tr:lt(3)","#formbox").remove();
+            $("tr:not(.actions)","#formbox").remove();
             $("#formbox  table tbody").prepend(data["response_html"]);
             show_hide_error_box();
             $("#errorbox span").html("There is an error in the form.Please repost the form");
